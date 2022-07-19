@@ -4,6 +4,7 @@ import fragmentShader from '~/assets/shaders/fragment.glsl'
 import vertexShader from '~/assets/shaders/vertex.glsl'
 
 const { gsap } = useGsap()
+let sketch: Sketch
 const canvas = ref<HTMLCanvasElement>(null)
 class Sketch {
   public scene: THREE.Scene
@@ -62,13 +63,16 @@ class Sketch {
   }
 }
 onMounted(() => {
-  const sketch = new Sketch()
+  sketch = new Sketch()
   gsap.to(sketch.material.uniforms.customA, {
-    duration: 5,
+    duration: 3,
     value: 0.4,
     repeat: -1,
     yoyo: true,
   })
+})
+onUnmounted(() => {
+  gsap.killTweensOf(sketch.material.uniforms.customA)
 })
 </script>
 <template>

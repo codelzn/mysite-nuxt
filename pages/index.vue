@@ -1,7 +1,8 @@
 <template>
   <div>
-    <Background />
-    <h1 class="text-center text-7xl text-orange-400">僕のサイト</h1>
+    <Background class="blur-sm" />
+    <h1 class="text-7xl text-orange-400 text-center">李です、夜露死苦</h1>
+    <h2 class="text-5xl text-blue-500 text-center mt-3">サイト開発中です</h2>
   </div>
 </template>
 <script lang="ts" setup>
@@ -15,6 +16,18 @@ onMounted(() => {
     {
       opacity: 0,
       y: -100,
+    },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+    }
+  );
+  gsap.fromTo(
+    "h2",
+    {
+      opacity: 0,
+      y: -200,
     },
     {
       opacity: 1,
