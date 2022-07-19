@@ -31,7 +31,7 @@ class Sketch {
     this.geometry = new THREE.SphereBufferGeometry(0.3, 32, 32)
     this.material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
-      wireframe: true,
+      // wireframe: true,
       uniforms: {
         uTime: { value: 0 },
         customA: { value: 0 },
