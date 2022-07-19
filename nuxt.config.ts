@@ -25,6 +25,6 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxtjs/tailwindcss'],
   tailwindcss: {
-    viewer: true,
+    viewer: false,
   }
 });

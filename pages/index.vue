@@ -1,13 +1,13 @@
 <template>
   <div>
     <Background class="blur-sm" />
-    <h1 class="text-7xl text-orange-400 text-center">李です、よろしく</h1>
+    <h1 class="text-7xl text-orange-400 text-center">Code LZN</h1>
     <h2 class="text-5xl text-blue-500 text-center mt-3">サイト開発中です</h2>
   </div>
 </template>
 <script lang="ts" setup>
 useHead({
-  title: "僕のサイト",
+  title: "Code LZN Blog",
 });
 const { gsap } = useGsap();
 onMounted(() => {
