@@ -9,16 +9,20 @@
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^5.3.0",
     "@types/three": "^0.141.0",
+    "@vueuse/core": "^8.9.4",
+    "@vueuse/nuxt": "^8.9.4",
     "nuxt": "3.0.0-rc.6",
     "sass": "^1.53.0",
     "vite-plugin-glsl": "^0.3.0",
     "vite-svg-loader": "^3.4.0"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.3.0",
     "gsap": "^3.10.4",
     "imagesloaded": "^5.0.0",
     "lil-gui": "^0.17.0",
     "locomotive-scroll": "^4.1.4",
+    "pinia": "^2.0.16",
     "three": "^0.142.0"
   }
 }

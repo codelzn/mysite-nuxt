@@ -5,6 +5,7 @@ import PluginSVGLoader from 'vite-svg-loader';
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   ssr: true,
+  // SSG
   target: 'static',
   sourcemap: false,
   app: {
@@ -23,7 +24,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [PluginGLSL(), PluginSVGLoader({ svgo: false })],
   },
-  modules: ['@nuxtjs/tailwindcss'],
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt'],
   tailwindcss: {
     viewer: false,
   },

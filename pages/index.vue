@@ -14,6 +14,7 @@
 <script lang="ts" setup>
 const title1 = ref<HTMLElement>(null);
 const title2 = ref<HTMLElement>(null);
+
 useHead({
   title: "Code LZN Blog",
 });
