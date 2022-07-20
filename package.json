@@ -17,6 +17,7 @@
   "dependencies": {
     "gsap": "^3.10.4",
     "imagesloaded": "^5.0.0",
+    "lil-gui": "^0.17.0",
     "locomotive-scroll": "^4.1.4",
     "three": "^0.142.0"
   }
