@@ -44,17 +44,15 @@ class Sketch {
     this.controls = new OrbitControls(this.camera, canvas.value);
     this.controls.enableDamping = true;
     this.gui = new GUI();
-    // this.textures[0] = this.textureLoader.load('/1.jpg');
-    // this.textures[1] = this.textureLoader.load('/2.jpg');
-    // this.textures[2] = this.textureLoader.load('/3.jpg');
+    this.textures[0] = this.textureLoader.load("/image/img1.png");
+    this.textures[1] = this.textureLoader.load("/image/img2.jpg");
     this.loaderManager.onLoad = () => {
       this.init();
     };
-    this.init();
   }
   init() {
-    // console.log(this.textures[0].source.data.naturalHeight)
-    // console.log(this.textures[0].source.data.naturalWidth)
+    // console.log(this.textures[0].source.data.naturalHeight);
+    // console.log(this.textures[0].source.data.naturalWidth);
     this.onResize();
     this.setPlane();
     // this.setGui()
@@ -87,13 +85,13 @@ class Sketch {
   }
 
   setPlane() {
-    const geometry = new THREE.PlaneGeometry(4, 4, 64, 64);
+    const geometry = new THREE.PlaneGeometry(4, 2, 64, 64);
     const material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
       uniforms: {
         uTime: { value: 0 },
-        // uTexture1: { value: this.textures[0] },
-        // uTexture2: { value: this.textures[1] },
+        uTexture1: { value: this.textures[0] },
+        uTexture2: { value: this.textures[1] },
         // uTexture3: { value: this.textures[2] },
       },
       vertexShader,
@@ -104,7 +102,8 @@ class Sketch {
   }
 }
 onMounted(() => {
-  new Sketch();
+  const sketch = new Sketch();
+  window.addEventListener("resize", () => sketch.onResize());
 });
 </script>
 <style lang="scss" scoped></style>
