@@ -1,8 +1,8 @@
 <template>
   <div>
     <Background />
-    <h1 class="text-7xl text-orange-400 text-center">Code LZN</h1>
-    <h2 class="text-5xl text-blue-500 text-center mt-3">サイト開発中です</h2>
+    <h1 ref="title1" class="text-7xl text-orange-400 text-center">Code LZN</h1>
+    <h2 ref="title2" class="text-5xl text-blue-500 text-center mt-3">サイト開発中です</h2>
     <NuxtLink href="/gsapsketch">
       <h3 class="text-center text-blue-400 text-4xl">GSAPSketch</h3>
     </NuxtLink>
@@ -12,13 +12,15 @@
   </div>
 </template>
 <script lang="ts" setup>
+const title1 = ref<HTMLElement>(null);
+const title2 = ref<HTMLElement>(null);
 useHead({
   title: "Code LZN Blog",
 });
 const { gsap } = useGsap();
 onMounted(() => {
   gsap.fromTo(
-    "h1",
+    title1.value,
     {
       opacity: 0,
       y: -100,
@@ -30,7 +32,7 @@ onMounted(() => {
     }
   );
   gsap.fromTo(
-    "h2",
+    title2.value,
     {
       opacity: 0,
       y: -200,
