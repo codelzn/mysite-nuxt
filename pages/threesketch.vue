@@ -41,7 +41,7 @@ class Sketch {
     this.clock = new THREE.Clock();
     this.loaderManager = new THREE.LoadingManager();
     this.textureLoader = new THREE.TextureLoader(this.loaderManager);
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls = new OrbitControls(this.camera, canvas.value);
     this.controls.enableDamping = true;
     this.gui = new GUI();
     // this.textures[0] = this.textureLoader.load('/1.jpg');
