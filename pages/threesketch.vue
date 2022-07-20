@@ -46,6 +46,7 @@ class Sketch {
     this.gui = new GUI();
     this.textures[0] = this.textureLoader.load("/image/img1.png");
     this.textures[1] = this.textureLoader.load("/image/img2.jpg");
+    this.textures[2] = this.textureLoader.load("/smiles.png");
     this.loaderManager.onLoad = () => {
       this.init();
     };
@@ -67,14 +68,7 @@ class Sketch {
   }
 
   setGui() {
-    this.gui.add(
-      (this.mesh!.material as THREE.ShaderMaterial).uniforms.uTexture1.value,
-      "value"
-    );
-    this.gui.add(
-      (this.mesh!.material as THREE.ShaderMaterial).uniforms.uTexture2.value,
-      "value"
-    );
+    console.log("gui");
   }
 
   onResize() {
@@ -85,14 +79,15 @@ class Sketch {
   }
 
   setPlane() {
-    const geometry = new THREE.PlaneGeometry(4, 2, 64, 64);
+    const geometry = new THREE.PlaneGeometry(4, 4, 64, 64);
     const material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
+      transparent: true,
       uniforms: {
         uTime: { value: 0 },
         uTexture1: { value: this.textures[0] },
         uTexture2: { value: this.textures[1] },
-        // uTexture3: { value: this.textures[2] },
+        uTexture3: { value: this.textures[2] },
       },
       vertexShader,
       fragmentShader,
