@@ -4,10 +4,13 @@
 <script lang="ts" setup>
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import GUI from "lil-gui";
 import vertexShader from "~/assets/shaders/threesketch/vertex.glsl";
 import fragmentShader from "~/assets/shaders/threesketch/fragment.glsl";
 const canvas = ref<HTMLCanvasElement>(null);
+let sketch: Sketch;
 class Sketch {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
@@ -17,8 +20,11 @@ class Sketch {
   gui: GUI;
   loaderManager: THREE.LoadingManager;
   textureLoader: THREE.TextureLoader;
+  rgbeLoader: RGBELoader;
+  gltfLoader: GLTFLoader;
   textures: THREE.Texture[] = [];
-  mesh?: THREE.Mesh;
+  materials: THREE.Material[] = [];
+  mesh: THREE.Mesh;
 
   constructor() {
     this.scene = new THREE.Scene();
@@ -37,13 +43,30 @@ class Sketch {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     // 不设置这个的话会导致素材失真
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    // document.body.appendChild(this.renderer.domElement);
+    // 输出模式
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    // 色调映射
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    // 曝光程度
+    this.renderer.toneMappingExposure = 0.3;
     this.clock = new THREE.Clock();
     this.loaderManager = new THREE.LoadingManager();
     this.textureLoader = new THREE.TextureLoader(this.loaderManager);
+    this.rgbeLoader = new RGBELoader();
+    this.gltfLoader = new GLTFLoader(this.loaderManager);
     this.controls = new OrbitControls(this.camera, canvas.value);
     this.controls.enableDamping = true;
     this.gui = new GUI();
+    // 异步加载
+    this.rgbeLoader.loadAsync("/hdr/night.hdr").then((texture) => {
+      texture.mapping = THREE.EquirectangularRefractionMapping;
+      this.scene.background = texture;
+      this.scene.environment = texture;
+    });
+    this.gltfLoader.load("/model/flyLight.glb", (gltf) => {
+      console.log(gltf);
+      this.scene.add(gltf.scene);
+    });
     this.textures[0] = this.textureLoader.load("/image/img1.png");
     this.textures[1] = this.textureLoader.load("/image/img2.jpg");
     this.textures[2] = this.textureLoader.load("/smiles.png");
@@ -56,20 +79,16 @@ class Sketch {
     // console.log(this.textures[0].source.data.naturalWidth);
     this.onResize();
     this.setPlane();
-    // this.setGui()
+    this.setGui();
     this.render();
   }
   render() {
     requestAnimationFrame(() => this.render());
     this.renderer.render(this.scene, this.camera);
     this.controls.update();
-    (this.mesh
-      ?.material as THREE.ShaderMaterial).uniforms.uTime.value = this.clock.getElapsedTime();
   }
 
-  setGui() {
-    console.log("gui");
-  }
+  setGui() {}
 
   onResize() {
     this.camera.updateProjectionMatrix();
@@ -83,22 +102,22 @@ class Sketch {
     const material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
       transparent: true,
-      uniforms: {
-        uTime: { value: 0 },
-        uTexture1: { value: this.textures[0] },
-        uTexture2: { value: this.textures[1] },
-        uTexture3: { value: this.textures[2] },
-      },
       vertexShader,
       fragmentShader,
     });
+    this.materials.push(material);
     this.mesh = new THREE.Mesh(geometry, material);
-    this.scene.add(this.mesh);
+    // this.scene.add(this.mesh);
   }
 }
 onMounted(() => {
-  const sketch = new Sketch();
+  sketch = new Sketch();
   window.addEventListener("resize", () => sketch.onResize());
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", () => sketch.onResize());
+  // 删除gui
+  sketch.gui.destroy();
 });
 </script>
 <style lang="scss" scoped></style>
