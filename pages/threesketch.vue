@@ -5,7 +5,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader, GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import GUI from "lil-gui";
 import vertexShader from "~/assets/shaders/threesketch/vertex.glsl";
 import fragmentShader from "~/assets/shaders/threesketch/fragment.glsl";
@@ -17,11 +17,12 @@ class Sketch {
   renderer: THREE.WebGLRenderer;
   controls: OrbitControls;
   clock: THREE.Clock;
-  gui: GUI;
+  gui?: GUI;
   loaderManager: THREE.LoadingManager;
   textureLoader: THREE.TextureLoader;
   rgbeLoader: RGBELoader;
   gltfLoader: GLTFLoader;
+  gltf: GLTF;
   textures: THREE.Texture[] = [];
   materials: THREE.Material[] = [];
   mesh: THREE.Mesh;
@@ -56,7 +57,7 @@ class Sketch {
     this.gltfLoader = new GLTFLoader(this.loaderManager);
     this.controls = new OrbitControls(this.camera, canvas.value);
     this.controls.enableDamping = true;
-    this.gui = new GUI();
+    // this.gui = new GUI();
     // 异步加载
     this.rgbeLoader.loadAsync("/hdr/night.hdr").then((texture) => {
       texture.mapping = THREE.EquirectangularRefractionMapping;
@@ -64,8 +65,8 @@ class Sketch {
       this.scene.environment = texture;
     });
     this.gltfLoader.load("/model/flyLight.glb", (gltf) => {
-      console.log(gltf);
-      this.scene.add(gltf.scene);
+      this.gltf = gltf;
+      this.setMesh();
     });
     this.textures[0] = this.textureLoader.load("/image/img1.png");
     this.textures[1] = this.textureLoader.load("/image/img2.jpg");
@@ -78,7 +79,6 @@ class Sketch {
     // console.log(this.textures[0].source.data.naturalHeight);
     // console.log(this.textures[0].source.data.naturalWidth);
     this.onResize();
-    this.setPlane();
     this.setGui();
     this.render();
   }
@@ -86,6 +86,8 @@ class Sketch {
     requestAnimationFrame(() => this.render());
     this.renderer.render(this.scene, this.camera);
     this.controls.update();
+    (this
+      .materials[0] as THREE.ShaderMaterial).uniforms.uTime.value = this.clock.getElapsedTime();
   }
 
   setGui() {}
@@ -95,19 +97,32 @@ class Sketch {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    (this.materials[0] as THREE.ShaderMaterial).uniforms.resolution.value.set(
+      window.innerWidth,
+      window.innerHeight
+    );
   }
 
-  setPlane() {
-    const geometry = new THREE.PlaneGeometry(4, 4, 64, 64);
+  setMesh() {
     const material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
       transparent: true,
       vertexShader,
       fragmentShader,
+      uniforms: {
+        uTime: { value: 0 },
+        resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+        uTexture1: { value: this.textures[0] },
+        uTexture2: { value: this.textures[1] },
+        uTexture3: { value: this.textures[2] },
+      },
     });
     this.materials.push(material);
-    this.mesh = new THREE.Mesh(geometry, material);
-    // this.scene.add(this.mesh);
+    this.gltf.scene.children.pop();
+    this.gltf.scene.scale.set(0.3, 0.3, 0.3);
+    this.scene.add(this.gltf.scene);
+    const lightBox = this.gltf.scene.children[1] as THREE.Mesh;
+    lightBox.material = this.materials[0];
   }
 }
 onMounted(() => {

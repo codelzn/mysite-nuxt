@@ -82,13 +82,8 @@ void main() {
   vec3 newPosition = position;
   float PI = 3.1415926535897932384626433832795;
 
-
   float noise = cnoise(10.0 * vec3(position.x, position.y, position.z + uTime/10.0));
-
   newPosition += customA * normal * noise;
-
-  // vNoise = dist;
   vUv = uv;
-
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
 }
